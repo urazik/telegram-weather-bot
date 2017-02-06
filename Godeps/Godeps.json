@@ -1,0 +1,79 @@
+{
+	"ImportPath": "github.com/lavrs/telegram-weather-bot",
+	"GoVersion": "go1.7",
+	"GodepVersion": "v79",
+	"Deps": [
+		{
+			"ImportPath": "github.com/Sirupsen/logrus",
+			"Comment": "v0.11.0-35-g61e43dc",
+			"Rev": "61e43dc76f7ee59a82bdf3d71033dc12bea4c77d"
+		},
+		{
+			"ImportPath": "github.com/cenkalti/backoff",
+			"Comment": "v1.0.0-15-gb02f2bb",
+			"Rev": "b02f2bbce11d7ea6b97f282ef1771b0fe2f65ef3"
+		},
+		{
+			"ImportPath": "github.com/go-telegram-bot-api/telegram-bot-api",
+			"Comment": "v4.6-17-gf5c6a47",
+			"Rev": "f5c6a478a0e3271a51649c64661ac90ed3d30bf1"
+		},
+		{
+			"ImportPath": "github.com/go-yaml/yaml",
+			"Rev": "4c78c975fe7c825c6d1466c42be594d1d6f3aba6"
+		},
+		{
+			"ImportPath": "github.com/golang/protobuf/proto",
+			"Rev": "8ee79997227bf9b34611aee7946ae64735e6fd93"
+		},
+		{
+			"ImportPath": "github.com/hailocab/go-hostpool",
+			"Rev": "e80d13ce29ede4452c43dea11e79b9bc8a15b478"
+		},
+		{
+			"ImportPath": "github.com/lavrs/darksky/forecast",
+			"Rev": "3b23fee3beef16a1baf913ae4cc57a6d2d2ca913"
+		},
+		{
+			"ImportPath": "github.com/lavrs/google-geocode/geocode",
+			"Rev": "7efa1246a159e03bd209bbd7f1c5dc61056132a0"
+		},
+		{
+			"ImportPath": "github.com/technoweenie/multipartstreamer",
+			"Comment": "v1.0.1",
+			"Rev": "a90a01d73ae432e2611d178c18367fbaa13e0154"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/pbkdf2",
+			"Rev": "77014cf7f9bde4925afeed52b7bf676d5f5b4285"
+		},
+		{
+			"ImportPath": "golang.org/x/sys/unix",
+			"Rev": "7a6e5648d140666db5d920909e082ca00a87ba2c"
+		},
+		{
+			"ImportPath": "gopkg.in/fatih/pool.v2",
+			"Rev": "6e328e67893eb46323ad06f0e92cb9536babbabc"
+		},
+		{
+			"ImportPath": "gopkg.in/gorethink/gorethink.v3",
+			"Comment": "v3.0.1",
+			"Rev": "610fcc04c971a9fa42f1b6625c7c52b5bb472c51"
+		},
+		{
+			"ImportPath": "gopkg.in/gorethink/gorethink.v3/encoding",
+			"Comment": "v3.0.1",
+			"Rev": "610fcc04c971a9fa42f1b6625c7c52b5bb472c51"
+		},
+		{
+			"ImportPath": "gopkg.in/gorethink/gorethink.v3/ql2",
+			"Comment": "v3.0.1",
+			"Rev": "610fcc04c971a9fa42f1b6625c7c52b5bb472c51"
+		},
+		{
+			"ImportPath": "gopkg.in/gorethink/gorethink.v3/types",
+			"Comment": "v3.0.1",
+			"Rev": "610fcc04c971a9fa42f1b6625c7c52b5bb472c51"
+		}
+	]
+}
