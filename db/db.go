@@ -54,7 +54,24 @@ func UpdateUserLang(user *m.DB, lang string, telegramID int64) string {
 	}
 }
 
-func updateUser(ID string, g *gmodel.Geocoding) {
+func UpdateUserUnits(telegramID int64, units string) {
+	ID := getUserID(telegramID)
+
+	if (units == "°c, mps") || (units == "°c, м/c") {
+		units = "si"
+	} else {
+		units = "us"
+	}
+
+	var data = map[string]interface{}{
+		"units": units,
+	}
+
+	_, err := r.Table("users").Get(ID).Update(data).RunWrite(session)
+	errors.CheckErrPanic(err)
+}
+
+func updateUserLocation(ID string, g *gmodel.Geocoding) {
 	var data = map[string]interface{}{
 		"location": g.Result[0].FormattedAddress,
 		"lat":      g.Result[0].Geometry.Location.Lat,
@@ -69,7 +86,7 @@ func SetUser(telegramID int64, g *gmodel.Geocoding, lang string) {
 	userID := getUserID(telegramID)
 
 	if userID != nil {
-		updateUser(*userID, g)
+		updateUserLocation(*userID, g)
 		return
 	}
 
@@ -87,6 +104,7 @@ func SetUser(telegramID int64, g *gmodel.Geocoding, lang string) {
 			"lang":       lang,
 			"lat":        g.Result[0].Geometry.Location.Lat,
 			"lng":        g.Result[0].Geometry.Location.Lng,
+			"units":      "si",
 		}
 	}
 

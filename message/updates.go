@@ -39,8 +39,34 @@ func Updates(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
 		return
 	}
 
+	if update.Message.Text == model.Back {
+		MainMenuMsg(bot, update.Message.Chat.ID)
+
+		return
+	}
+
 	if (update.Message.Text == model.Info) || (update.Message.Command() == "info") {
 		InfoMsg(bot, update.Message.Chat.ID)
+
+		return
+	}
+
+	if update.Message.Text == model.Gear {
+		SettingsMsg(bot, update.Message.Chat.ID)
+
+		return
+	}
+
+	if (update.Message.Text == "°c, mps") || (update.Message.Text == "°c, м/c") ||
+		(update.Message.Text == "°f, mph") || (update.Message.Text == "°f, миль/ч") {
+
+		UpdateUnitsMsg(bot, update.Message.Chat.ID, update.Message.Text)
+
+		return
+	}
+
+	if (update.Message.Text == model.TriangularRuler) || (update.Message.Command() == "units") {
+		UnitsMsg(bot, update.Message.Chat.ID)
 
 		return
 	}

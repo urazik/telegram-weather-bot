@@ -17,11 +17,15 @@ func GetReverseGeocode(location *tgbotapi.Location, lang string) (*geocode.Geoco
 	)
 
 	if lang == "ru" {
-		g, err = geocode.ReverseGeocode(strconv.FormatFloat(location.Latitude, 'f', 6, 64),
+		g, err = geocode.ReverseGeocode(strconv.FormatFloat(
+			location.Latitude, 'f', 6, 64),
+
 			strconv.FormatFloat(location.Longitude, 'f', 6, 64),
 			geocode.Russian, c.Cfg.GoogleGeocodeToken)
 	} else {
-		g, err = geocode.ReverseGeocode(strconv.FormatFloat(location.Latitude, 'f', 6, 64),
+		g, err = geocode.ReverseGeocode(strconv.FormatFloat(
+			location.Latitude, 'f', 6, 64),
+
 			strconv.FormatFloat(location.Longitude, 'f', 6, 64),
 			geocode.English, c.Cfg.GoogleGeocodeToken)
 	}

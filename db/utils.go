@@ -27,7 +27,8 @@ func decodeOneBoolQueryResult(c *r.Cursor) (bool, error) {
 }
 
 func getUser(telegramID int64) *m.DB {
-	res, err := r.Table("users").Filter(r.Row.Field("telegramID").Eq(telegramID)).Run(session)
+	res, err := r.Table("users").Filter(
+		r.Row.Field("telegramID").Eq(telegramID)).Run(session)
 	errors.CheckErrPanic(err)
 	defer res.Close()
 
@@ -43,7 +44,8 @@ func getUser(telegramID int64) *m.DB {
 }
 
 func getUserID(telegramID int64) *string {
-	res, err := r.Table("users").Filter(r.Row.Field("telegramID").Eq(telegramID)).Field("id").Run(session)
+	res, err := r.Table("users").Filter(
+		r.Row.Field("telegramID").Eq(telegramID)).Field("id").Run(session)
 	errors.CheckErrPanic(err)
 	defer res.Close()
 

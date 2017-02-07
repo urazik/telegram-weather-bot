@@ -14,6 +14,7 @@ type DB struct {
 	Lang       string  `gorethink:"lang"`
 	Lat        float64 `gorethink:"lat"`
 	Lng        float64 `gorethink:"lng"`
+	Units      string  `gorethink:"units"`
 }
 
 var (
@@ -32,6 +33,9 @@ var (
 	Info              = "\xE2\x84\xB9"
 	Sunrise           = "\xF0\x9F\x8C\x85"
 	Sunset            = "\xF0\x9F\x8C\x84"
+	Gear              = "\xE2\x9A\x99"
+	TriangularRuler   = "\xF0\x9F\x93\x90"
+	Back              = "\xE2\x97\x80"
 
 	Moons = map[string]string{
 		"new moon":           "\xF0\x9F\x8C\x91",

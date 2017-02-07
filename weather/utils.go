@@ -19,24 +19,30 @@ func FTS6(i float64) string {
 	return strconv.FormatFloat(i, 'f', 6, 64)
 }
 
-func getWeatherByDay(user *model.DB, f forecast.DataPoint, timezone string) string {
-	return getDate(f.Time, timezone, user.Lang) + "," + getCity(user.Location) + "\n`" + f.Summary + "`\n\n" +
-		model.Icons[f.Icon] + " *" + FTS0(f.TemperatureMin) + ".." + FTS0(f.TemperatureMax) + "°С*  " +
-		model.Directions[int(math.Mod(f.WindBearing/22.5+.5, 16))] + " *" + FTS0(f.WindSpeed) + " " + l.Language[user.Lang]["mps"] + "*\n" +
-		model.Sunrise + " " + getTime(f.SunriseTime, timezone) + "  " +
-		model.Sunset + " " + getTime(f.SunsetTime, timezone) + "  " + model.Moons[getMoonPhase(f.MoonPhase)] + "\n" +
-		"`" + l.Language[user.Lang]["IFL"] + "`  *" + FTS0(f.ApparentTemperatureMin) + ".." + FTS0(f.ApparentTemperatureMax) + "°C*"
+func getWeatherByDay(user *model.DB, f forecast.DataPoint, timezone, units string) string {
+	return getDate(f.Time, timezone, user.Lang) + "," + getCity(user.Location) +
+		"\n`" + f.Summary + "`\n\n" + model.Icons[f.Icon] + " *" +
+		FTS0(f.TemperatureMin) + ".." + FTS0(f.TemperatureMax) + getTempUnit(units) +
+		"*  " + model.Directions[int(math.Mod(f.WindBearing/22.5+.5, 16))] +
+		" *" + FTS0(f.WindSpeed) + " " + getWindUnit(user.Lang, units) +
+		"*\n" + model.Sunrise + " " + getTime(f.SunriseTime, timezone) +
+		"  " + model.Sunset + " " + getTime(f.SunsetTime, timezone) +
+		"  " + model.Moons[getMoonPhase(f.MoonPhase)] + "\n" +
+		"`" + l.Language[user.Lang]["IFL"] + "`  *" +
+		FTS0(f.ApparentTemperatureMin) + ".." + FTS0(f.ApparentTemperatureMax) + "°C*"
 }
 
-func getWeekWeather(user *model.DB, f *forecast.Forecast) string {
+func getWeekWeather(user *model.DB, f *forecast.Forecast, units string) string {
 	var text string
 
 	text = "`" + user.Location + "`\n\n`" + f.Daily.Summary + "`\n\n"
 	for _, day := range f.Daily.Data {
 		text += getDate(day.Time, f.Timezone, user.Lang) + "  " +
-			model.Icons[day.Icon] + " *" + FTS0(day.TemperatureMin) + ".." + FTS0(day.TemperatureMax) + "°С*  " +
-			model.Directions[int(math.Mod(day.WindBearing/22.5+.5, 16))] + " *" + FTS0(day.WindSpeed) + " " + l.Language[user.Lang]["mps"] + "*\n" +
-			"`" + day.Summary + "`\n\n"
+			model.Icons[day.Icon] + " *" + FTS0(day.TemperatureMin) +
+			".." + FTS0(day.TemperatureMax) + getTempUnit(units) +
+			"*  " + model.Directions[int(math.Mod(day.WindBearing/22.5+.5, 16))] +
+			" *" + FTS0(day.WindSpeed) + " " + getWindUnit(user.Lang, units) +
+			"*\n`" + day.Summary + "`\n\n"
 	}
 
 	return text
@@ -54,27 +60,57 @@ func getMoonPhase(phase float64) string {
 	}
 }
 
-func getForecast(lat, lng float64, lang string) *forecast.Forecast {
+func getForecast(lat, lng float64, lang, units string) *forecast.Forecast {
 	var (
 		f   *forecast.Forecast
 		err error
 	)
 
 	if lang == "ru" {
-		f, err = forecast.GetForecast(c.Cfg.DarkskyToken, FTS6(lat), FTS6(lng), "now", forecast.Russian, forecast.SI)
+		if units == "si" {
+			f, err = forecast.GetForecast(
+				c.Cfg.DarkskyToken, FTS6(lat), FTS6(lng), "now", forecast.Russian, forecast.SI)
+		} else {
+			f, err = forecast.GetForecast(
+				c.Cfg.DarkskyToken, FTS6(lat), FTS6(lng), "now", forecast.Russian, forecast.US)
+		}
 	} else {
-		f, err = forecast.GetForecast(c.Cfg.DarkskyToken, FTS6(lat), FTS6(lng), "now", forecast.English, forecast.SI)
+		if units == "si" {
+			f, err = forecast.GetForecast(
+				c.Cfg.DarkskyToken, FTS6(lat), FTS6(lng), "now", forecast.English, forecast.SI)
+		} else {
+			f, err = forecast.GetForecast(
+				c.Cfg.DarkskyToken, FTS6(lat), FTS6(lng), "now", forecast.English, forecast.US)
+		}
 	}
 	errors.CheckErrPanic(err)
 
 	return f
 }
 
-func getCurrentWeather(lang string, f *forecast.Forecast) string {
-	return model.Icons[f.Currently.Icon] + " *" + FTS0(f.Currently.Temperature) + "°С*  " +
-		model.Directions[int(math.Mod(f.Currently.WindBearing/22.5+.5, 16))] + " *" +
-		FTS0(f.Currently.WindSpeed) + " " + l.Language[lang]["mps"] + "*  `" + f.Currently.Summary + ".`\n" +
-		"`" + l.Language[lang]["IFL"] + "`  *" + FTS0(f.Currently.ApparentTemperature) + "°C*"
+func getCurrentWeather(lang string, units string, f *forecast.Forecast) string {
+	return model.Icons[f.Currently.Icon] + " *" + FTS0(f.Currently.Temperature) +
+		getTempUnit(units) + "*  " +
+		model.Directions[int(math.Mod(f.Currently.WindBearing/22.5+.5, 16))] +
+		" *" + FTS0(f.Currently.WindSpeed) + " " + getWindUnit(lang, units) +
+		"*  `" + f.Currently.Summary + ".`\n`" + l.Language[lang]["IFL"] +
+		"`  *" + FTS0(f.Currently.ApparentTemperature) + "°C*"
+}
+
+func getTempUnit(units string) string {
+	if units == "si" {
+		return "°С"
+	} else {
+		return "°F"
+	}
+}
+
+func getWindUnit(lang, units string) string {
+	if units == "si" {
+		return l.Language[lang]["mps"]
+	} else {
+		return l.Language[lang]["mph"]
+	}
 }
 
 func getCity(city string) string {
@@ -90,7 +126,8 @@ func getTime(ftime int64, timezone string) string {
 func getDate(ftime int64, timezone, lang string) string {
 	date := getLocalTime(ftime, timezone)
 
-	return "_" + date[8:10] + "/" + date[5:7] + " " + getWeekday(ftime, timezone, lang) + "_"
+	return "_" + date[8:10] + "/" + date[5:7] +
+		" " + getWeekday(ftime, timezone, lang) + "_"
 }
 
 func getLocalTime(ftime int64, ftimezone string) string {
