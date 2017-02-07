@@ -1,9 +1,7 @@
 package weather
 
 import (
-	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/lavrs/darksky/forecast"
-	"github.com/lavrs/google-geocode/geocode"
 	c "github.com/lavrs/telegram-weather-bot/config"
 	l "github.com/lavrs/telegram-weather-bot/language"
 	"github.com/lavrs/telegram-weather-bot/model"
@@ -19,28 +17,6 @@ func FTS0(i float64) string {
 
 func FTS6(i float64) string {
 	return strconv.FormatFloat(i, 'f', 6, 64)
-}
-
-func getReverseGeocoding(location *tgbotapi.Location, lang string) (*geocode.Geocoding, error) {
-	var (
-		g   *geocode.Geocoding
-		err error
-	)
-
-	if lang == "ru" {
-		g, err = geocode.ReverseGeocode(strconv.FormatFloat(location.Latitude, 'f', 6, 64),
-			strconv.FormatFloat(location.Longitude, 'f', 6, 64),
-			geocode.Russian, c.Cfg.GoogleGeocodeToken)
-	} else {
-		g, err = geocode.ReverseGeocode(strconv.FormatFloat(location.Latitude, 'f', 6, 64),
-			strconv.FormatFloat(location.Longitude, 'f', 6, 64),
-			geocode.English, c.Cfg.GoogleGeocodeToken)
-	}
-	if err != nil {
-		return nil, err
-	}
-
-	return g, nil
 }
 
 func getWeatherByDay(user *model.DB, f forecast.DataPoint, timezone string) string {

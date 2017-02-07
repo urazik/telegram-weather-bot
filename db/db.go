@@ -1,10 +1,10 @@
 package db
 
 import (
-	"github.com/lavrs/google-geocode/geocode"
-	c "github.com/lavrs/telegram-weather-bot/config"
+	gmodel "github.com/lavrs/google-geocode/geocode"
 	m "github.com/lavrs/telegram-weather-bot/model"
 	"github.com/lavrs/telegram-weather-bot/utils/errors"
+	"github.com/lavrs/telegram-weather-bot/utils/geocode"
 	r "gopkg.in/gorethink/gorethink.v3"
 	"log"
 )
@@ -26,29 +26,19 @@ func init() {
 }
 
 func UpdateUserLang(user *m.DB, lang string, telegramID int64) string {
-	var (
-		err error
-		g   *geocode.Geocoding
-	)
-
 	ID := getUserID(telegramID)
 
 	if user.Lang == lang {
 		return lang
 	} else if user.Location != "" {
-		if lang == "ru" {
-			g, err = geocode.Geocode(user.Location, geocode.Russian, c.Cfg.GoogleGeocodeToken)
-		} else {
-			g, err = geocode.Geocode(user.Location, geocode.English, c.Cfg.GoogleGeocodeToken)
-		}
-		errors.CheckErrPanic(err)
+		g, _ := geocode.GetGeocode(user.Location, lang)
 
 		var data = map[string]interface{}{
-			"lang": lang,
-			"city": g.Result[0].FormattedAddress,
+			"lang":     lang,
+			"location": g.Result[0].FormattedAddress,
 		}
 
-		_, err = r.Table("users").Get(ID).Update(data).RunWrite(session)
+		_, err := r.Table("users").Get(ID).Update(data).RunWrite(session)
 		errors.CheckErrPanic(err)
 
 		return lang
@@ -57,25 +47,25 @@ func UpdateUserLang(user *m.DB, lang string, telegramID int64) string {
 			"lang": lang,
 		}
 
-		_, err = r.Table("users").Get(ID).Update(data).RunWrite(session)
+		_, err := r.Table("users").Get(ID).Update(data).RunWrite(session)
 		errors.CheckErrPanic(err)
 
 		return lang
 	}
 }
 
-func updateUser(ID string, g *geocode.Geocoding) {
+func updateUser(ID string, g *gmodel.Geocoding) {
 	var data = map[string]interface{}{
-		"city": g.Result[0].FormattedAddress,
-		"lat":  g.Result[0].Geometry.Location.Lat,
-		"lng":  g.Result[0].Geometry.Location.Lng,
+		"location": g.Result[0].FormattedAddress,
+		"lat":      g.Result[0].Geometry.Location.Lat,
+		"lng":      g.Result[0].Geometry.Location.Lng,
 	}
 
 	_, err := r.Table("users").Get(ID).Update(data).RunWrite(session)
 	errors.CheckErrPanic(err)
 }
 
-func SetUser(telegramID int64, g *geocode.Geocoding, lang string) {
+func SetUser(telegramID int64, g *gmodel.Geocoding, lang string) {
 	userID := getUserID(telegramID)
 
 	if userID != nil {
@@ -93,7 +83,7 @@ func SetUser(telegramID int64, g *geocode.Geocoding, lang string) {
 	} else {
 		data = map[string]interface{}{
 			"telegramID": telegramID,
-			"city":       g.Result[0].FormattedAddress,
+			"location":   g.Result[0].FormattedAddress,
 			"lang":       lang,
 			"lat":        g.Result[0].Geometry.Location.Lat,
 			"lng":        g.Result[0].Geometry.Location.Lng,

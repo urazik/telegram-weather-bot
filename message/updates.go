@@ -46,7 +46,7 @@ func Updates(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
 	}
 
 	if (update.Message.Text == model.GlobeWithMeridian) || (update.Message.Command() == "lang") {
-		LanguageMsg(bot, update.Message.Chat.ID)
+		LangKeyboardMsg(bot, update.Message.Chat.ID)
 
 		return
 	}

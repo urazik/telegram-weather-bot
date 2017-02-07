@@ -2,29 +2,19 @@ package weather
 
 import (
 	"github.com/go-telegram-bot-api/telegram-bot-api"
-	l "github.com/lavrs/telegram-weather-bot/language"
 	"github.com/lavrs/telegram-weather-bot/model"
 )
 
-func CurrentWeather(lat, lng float64, lang, city string) (string, error) {
+func CurrentWeather(lat, lng float64, lang, location string) string {
 	f := getForecast(lat, lng, lang)
 
-	return getTime(f.Currently.Time, f.Timezone) + getCity(city) + getCurrentWeather(lang, f), nil
+	return getTime(f.Currently.Time, f.Timezone) + getCity(location) + getCurrentWeather(lang, f)
 }
 
-func CurrentWeatherFromLocation(lang string, location *tgbotapi.Location) (string, error) {
-	g, err := getReverseGeocoding(location, lang)
-	if err != nil {
-		if err.Error() == "ZERO_RESULTS" {
-			return "_" + l.Language[lang]["ZERO_RESULTS_LOCATION"] + "_", nil
-		}
+func CurrentWeatherFromLocation(lang string, coord *tgbotapi.Location, location string) string {
+	f := getForecast(coord.Latitude, coord.Longitude, lang)
 
-		return "", err
-	}
-
-	f := getForecast(location.Latitude, location.Longitude, lang)
-
-	return getTime(f.Currently.Time, f.Timezone) + getCity(g.Result[0].FormattedAddress) + getCurrentWeather(lang, f), nil
+	return getTime(f.Currently.Time, f.Timezone) + getCity(location) + getCurrentWeather(lang, f)
 }
 
 func WeatherOfDay(user *model.DB) (string, error) {

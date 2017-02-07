@@ -10,7 +10,7 @@ type Config struct {
 
 type DB struct {
 	TelegramID int64   `gorethink:"telegramID"`
-	Location   string  `gorethink:"city"`
+	Location   string  `gorethink:"location"`
 	Lang       string  `gorethink:"lang"`
 	Lat        float64 `gorethink:"lat"`
 	Lng        float64 `gorethink:"lng"`

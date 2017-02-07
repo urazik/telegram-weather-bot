@@ -2,31 +2,30 @@ package msg
 
 import (
 	"github.com/go-telegram-bot-api/telegram-bot-api"
-	"github.com/lavrs/google-geocode/geocode"
-	c "github.com/lavrs/telegram-weather-bot/config"
 	"github.com/lavrs/telegram-weather-bot/db"
 	l "github.com/lavrs/telegram-weather-bot/language"
 	"github.com/lavrs/telegram-weather-bot/model"
 	"github.com/lavrs/telegram-weather-bot/utils/errors"
+	"github.com/lavrs/telegram-weather-bot/utils/geocode"
 	w "github.com/lavrs/telegram-weather-bot/weather"
 )
 
-func InfoMsg(bot *tgbotapi.BotAPI, chatID int64) {
-	isAuth, user := db.IsAuth(chatID)
+func InfoMsg(bot *tgbotapi.BotAPI, telegramID int64) {
+	isAuth, user := db.IsAuth(telegramID)
 
 	if !isAuth {
-		LanguageMsg(bot, chatID)
+		LangKeyboardMsg(bot, telegramID)
 		return
 	}
 
 	var msg tgbotapi.MessageConfig
 
 	if user.Location == "" {
-		msg = tgbotapi.NewMessage(chatID,
+		msg = tgbotapi.NewMessage(telegramID,
 			"*"+l.Language[user.Lang]["YourLL"]+"*\n"+
 				"`"+l.Language[user.Lang]["empty_location"]+"`   "+model.CountriesFATE[user.Lang])
 	} else {
-		msg = tgbotapi.NewMessage(chatID,
+		msg = tgbotapi.NewMessage(telegramID,
 			"*"+l.Language[user.Lang]["YourLL"]+"*\n"+
 				"`"+user.Location+"`   "+model.CountriesFATE[user.Lang])
 	}
@@ -37,20 +36,20 @@ func InfoMsg(bot *tgbotapi.BotAPI, chatID int64) {
 	errors.CheckErrPanic(err)
 }
 
-func UpdateLangMsg(bot *tgbotapi.BotAPI, chatID int64, message string) {
-	isAuth, user := db.IsAuth(chatID)
+func UpdateLangMsg(bot *tgbotapi.BotAPI, telegramID int64, message string) {
+	isAuth, user := db.IsAuth(telegramID)
 
 	var msg tgbotapi.MessageConfig
 
 	if isAuth {
-		lang := db.UpdateUserLang(user, model.CountriesFETA[message], chatID)
+		lang := db.UpdateUserLang(user, model.CountriesFETA[message], telegramID)
 
-		msg = tgbotapi.NewMessage(chatID, l.Language[lang]["changeLanguageTo"]+" "+model.CountriesFATE[model.CountriesFETA[message]])
+		msg = tgbotapi.NewMessage(telegramID, l.Language[lang]["changeLanguageTo"]+" "+model.CountriesFATE[model.CountriesFETA[message]])
 		msg.ReplyMarkup = mainKeyboard(model.CountriesFETA[message])
 	} else {
-		db.SetUser(chatID, nil, model.CountriesFETA[message])
+		db.SetUser(telegramID, nil, model.CountriesFETA[message])
 
-		msg = tgbotapi.NewMessage(chatID, l.Language[model.CountriesFETA[message]]["changeLanguageTo"]+" "+model.CountriesFATE[model.CountriesFETA[message]])
+		msg = tgbotapi.NewMessage(telegramID, l.Language[model.CountriesFETA[message]]["changeLanguageTo"]+" "+model.CountriesFATE[model.CountriesFETA[message]])
 		msg.ReplyMarkup = mainKeyboard(model.CountriesFETA[message])
 	}
 
@@ -58,15 +57,15 @@ func UpdateLangMsg(bot *tgbotapi.BotAPI, chatID int64, message string) {
 	errors.CheckErrPanic(err)
 }
 
-func LanguageMsg(bot *tgbotapi.BotAPI, chatID int64) {
-	isAuth, user := db.IsAuth(chatID)
+func LangKeyboardMsg(bot *tgbotapi.BotAPI, telegramID int64) {
+	isAuth, user := db.IsAuth(telegramID)
 
 	var msg tgbotapi.MessageConfig
 
 	if isAuth {
-		msg = tgbotapi.NewMessage(chatID, l.Language[user.Lang]["chooseLanguage"])
+		msg = tgbotapi.NewMessage(telegramID, l.Language[user.Lang]["chooseLanguage"])
 	} else {
-		msg = tgbotapi.NewMessage(chatID, l.ChooseLanguage)
+		msg = tgbotapi.NewMessage(telegramID, l.ChooseLanguage)
 	}
 
 	msg.ReplyMarkup = langKeyboard()
@@ -74,151 +73,139 @@ func LanguageMsg(bot *tgbotapi.BotAPI, chatID int64) {
 	errors.CheckErrPanic(err)
 }
 
-func StartMsg(bot *tgbotapi.BotAPI, chatID int64) {
-	isAuth, _ := db.IsAuth(chatID)
+func StartMsg(bot *tgbotapi.BotAPI, telegramID int64) {
+	isAuth, _ := db.IsAuth(telegramID)
 
 	if !isAuth {
-		LanguageMsg(bot, chatID)
+		LangKeyboardMsg(bot, telegramID)
 		return
 	} else {
-		Help(bot, chatID)
+		Help(bot, telegramID)
 	}
 }
 
-func Help(bot *tgbotapi.BotAPI, chatID int64) {
-	isAuth, user := db.IsAuth(chatID)
+func Help(bot *tgbotapi.BotAPI, telegramID int64) {
+	isAuth, user := db.IsAuth(telegramID)
 
 	if !isAuth {
-		LanguageMsg(bot, chatID)
+		LangKeyboardMsg(bot, telegramID)
 		return
 	}
 
-	msg := tgbotapi.NewMessage(chatID, l.Language[user.Lang]["help"])
+	msg := tgbotapi.NewMessage(telegramID, l.Language[user.Lang]["help"])
 	msg.ReplyMarkup = mainKeyboard(user.Lang)
 	msg.ParseMode = "markdown"
 	_, err := bot.Send(msg)
 	errors.CheckErrPanic(err)
 }
 
-func WeatherMsgFromCity(bot *tgbotapi.BotAPI, chatID int64, city string) {
-	isAuth, user := db.IsAuth(chatID)
+func WeatherMsgFromCity(bot *tgbotapi.BotAPI, telegramID int64, location string) {
+	isAuth, user := db.IsAuth(telegramID)
 
 	if !isAuth {
-		LanguageMsg(bot, chatID)
+		LangKeyboardMsg(bot, telegramID)
 		return
 	}
 
-	var (
-		g   *geocode.Geocoding
-		err error
-	)
+	var msg tgbotapi.MessageConfig
 
-	if user.Lang == "ru" {
-		g, err = geocode.Geocode(city, geocode.Russian, c.Cfg.GoogleGeocodeToken)
-	} else {
-		g, err = geocode.Geocode(city, geocode.English, c.Cfg.GoogleGeocodeToken)
-	}
+	g, err := geocode.GetGeocode(location, user.Lang)
 	if err != nil {
-		if err.Error() == "ZERO_RESULTS" {
-			msg := tgbotapi.NewMessage(chatID, l.Language[user.Lang]["ZERO_RESULTS_CITY"])
-			msg.ReplyMarkup = mainKeyboard(user.Lang)
-			_, err := bot.Send(msg)
-			errors.CheckErrPanic(err)
+		msg = tgbotapi.NewMessage(telegramID, err.Error())
+	} else {
+		if user.Location != g.Result[0].FormattedAddress {
+			db.SetUser(telegramID, g, user.Lang)
 
-			return
-		} else if err.Error() == "INVALID_REQUEST" {
-			msg := tgbotapi.NewMessage(chatID, l.Language[user.Lang]["INVALID_REQUEST"])
+			msg := tgbotapi.NewMessage(telegramID, l.Language[user.Lang]["changeCityTo"]+" "+g.Result[0].FormattedAddress)
 			msg.ReplyMarkup = mainKeyboard(user.Lang)
-			_, err := bot.Send(msg)
+			_, err = bot.Send(msg)
 			errors.CheckErrPanic(err)
-
-			return
 		}
 
-		errors.CheckErrPanic(err)
+		wthr := w.CurrentWeather(
+			g.Result[0].Geometry.Location.Lat, g.Result[0].Geometry.Location.Lng,
+			user.Lang, g.Result[0].FormattedAddress)
+
+		msg = tgbotapi.NewMessage(telegramID, wthr)
 	}
 
-	if user.Location != g.Result[0].FormattedAddress {
-		db.SetUser(chatID, g, user.Lang)
-
-		msg := tgbotapi.NewMessage(chatID, l.Language[user.Lang]["changeCityTo"]+" "+g.Result[0].FormattedAddress)
-		msg.ReplyMarkup = mainKeyboard(user.Lang)
-		_, err = bot.Send(msg)
-
-		errors.CheckErrPanic(err)
-	}
-
-	wthr, err := w.CurrentWeather(
-		g.Result[0].Geometry.Location.Lat, g.Result[0].Geometry.Location.Lng,
-		user.Lang, g.Result[0].FormattedAddress)
-	errors.CheckErrPanic(err)
-
-	msg := tgbotapi.NewMessage(chatID, wthr)
 	msg.ParseMode = "markdown"
 	_, err = bot.Send(msg)
 	errors.CheckErrPanic(err)
 }
 
-func WeatherMsgFromLocation(bot *tgbotapi.BotAPI, chatID int64, location *tgbotapi.Location) {
-	isAuth, user := db.IsAuth(chatID)
+func WeatherMsgFromLocation(bot *tgbotapi.BotAPI, telegramID int64, location *tgbotapi.Location) {
+	isAuth, user := db.IsAuth(telegramID)
 
 	if !isAuth {
-		LanguageMsg(bot, chatID)
+		LangKeyboardMsg(bot, telegramID)
 		return
 	}
 
-	wthr, err := w.CurrentWeatherFromLocation(user.Lang, location)
-	errors.CheckErrPanic(err)
+	var msg tgbotapi.MessageConfig
 
-	msg := tgbotapi.NewMessage(chatID, wthr)
+	g, err := geocode.GetReverseGeocode(location, user.Lang)
+	if err != nil {
+		msg = tgbotapi.NewMessage(telegramID, err.Error())
+	} else {
+		if (user.Lat != g.Result[0].Geometry.Location.Lat) || (user.Lng != g.Result[0].Geometry.Location.Lng) {
+			db.SetUser(telegramID, g, user.Lang)
+
+			msg = tgbotapi.NewMessage(telegramID, l.Language[user.Lang]["changeCityTo"]+" "+g.Result[0].FormattedAddress)
+			msg.ReplyMarkup = mainKeyboard(user.Lang)
+			_, err = bot.Send(msg)
+			errors.CheckErrPanic(err)
+		}
+
+		wthr := w.CurrentWeatherFromLocation(user.Lang, location, g.Result[0].FormattedAddress)
+		msg = tgbotapi.NewMessage(telegramID, wthr)
+	}
+
 	msg.ParseMode = "markdown"
 	_, err = bot.Send(msg)
 	errors.CheckErrPanic(err)
 }
 
-func WeatherMsgFromCmd(bot *tgbotapi.BotAPI, chatID int64, message string) {
-	isAuth, user := db.IsAuth(chatID)
+func WeatherMsgFromCmd(bot *tgbotapi.BotAPI, telegramID int64, message string) {
+	isAuth, user := db.IsAuth(telegramID)
 
 	if !isAuth {
-		LanguageMsg(bot, chatID)
-		return
-	}
-
-	if user.Location == "" {
-		msg := tgbotapi.NewMessage(chatID, l.Language[user.Lang]["city"])
-		msg.ReplyMarkup = helpKeyboard()
-		_, err := bot.Send(msg)
-		errors.CheckErrPanic(err)
-
+		LangKeyboardMsg(bot, telegramID)
 		return
 	}
 
 	var (
+		msg  tgbotapi.MessageConfig
 		wthr string
 		err  error
 	)
 
-	switch {
-	case (message == "now") || (message == "/now") || (message == "сейчас"):
-		wthr, err = w.CurrentWeather(user.Lat, user.Lng, user.Lang, user.Location)
-		errors.CheckErrPanic(err)
+	if user.Location == "" {
+		msg = tgbotapi.NewMessage(telegramID, l.Language[user.Lang]["emptycity"])
+		msg.ReplyMarkup = helpKeyboard()
+	} else {
+		switch {
+		case (message == "now") || (message == "/now") || (message == "сейчас"):
+			wthr = w.CurrentWeather(user.Lat, user.Lng, user.Lang, user.Location)
 
-	case (message == "for today") || (message == "/today") || (message == "на сегодня"):
-		wthr, err = w.WeatherOfDay(user)
-		errors.CheckErrPanic(err)
+		case (message == "for today") || (message == "/today") || (message == "на сегодня"):
+			wthr, err = w.WeatherOfDay(user)
+			errors.CheckErrPanic(err)
 
-	case (message == "for tomorrow") || (message == "/tomorrow") || (message == "на завтра"):
-		wthr, err = w.TomorrowWeather(user)
-		errors.CheckErrPanic(err)
+		case (message == "for tomorrow") || (message == "/tomorrow") || (message == "на завтра"):
+			wthr, err = w.TomorrowWeather(user)
+			errors.CheckErrPanic(err)
 
-	case (message == "for week") || (message == "/week") || (message == "на неделю"):
-		wthr, err = w.WeekWeather(user)
-		errors.CheckErrPanic(err)
+		case (message == "for week") || (message == "/week") || (message == "на неделю"):
+			wthr, err = w.WeekWeather(user)
+			errors.CheckErrPanic(err)
+		}
+
+		msg = tgbotapi.NewMessage(telegramID, wthr)
+		msg.ReplyMarkup = mainKeyboard(user.Lang)
+		msg.ParseMode = "markdown"
 	}
 
-	msg := tgbotapi.NewMessage(chatID, wthr)
-	msg.ReplyMarkup = mainKeyboard(user.Lang)
-	msg.ParseMode = "markdown"
 	_, err = bot.Send(msg)
 	errors.CheckErrPanic(err)
 }

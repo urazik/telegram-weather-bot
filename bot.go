@@ -11,7 +11,7 @@ import (
 func main() {
 	c.SetConfig()
 
-	bot, err := tgbotapi.NewBotAPI(c.Cfg.TelegramToken)
+	bot, err := tgbotapi.NewBotAPI(c.Cfg.TelegramTestToken)
 	errors.CheckErrPanic(err)
 
 	log.Printf("Authorized on account %s", bot.Self.UserName)

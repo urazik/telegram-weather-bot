@@ -8,7 +8,7 @@ import (
 
 func CheckErrPanic(cerr error) {
 	if cerr != nil {
-		bot, err := tgbotapi.NewBotAPI(config.Cfg.TelegramToken)
+		bot, err := tgbotapi.NewBotAPI(config.Cfg.TelegramTestToken)
 		if err != nil {
 			log.Println(err)
 		}
