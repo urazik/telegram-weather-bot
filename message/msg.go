@@ -258,16 +258,13 @@ func WeatherMsgFromCmd(bot *tgbotapi.BotAPI, telegramID int64, message string) {
 				user.Lang, user.Location, user.Units)
 
 		case (message == "for today") || (message == "/today") || (message == "на сегодня"):
-			wthr, err = w.WeatherOfDay(user)
-			errors.CheckErrPanic(err)
+			wthr = w.WeatherOfDay(user)
 
 		case (message == "for tomorrow") || (message == "/tomorrow") || (message == "на завтра"):
-			wthr, err = w.TomorrowWeather(user)
-			errors.CheckErrPanic(err)
+			wthr = w.TomorrowWeather(user)
 
 		case (message == "for week") || (message == "/week") || (message == "на неделю"):
-			wthr, err = w.WeekWeather(user)
-			errors.CheckErrPanic(err)
+			wthr = w.WeekWeather(user)
 		}
 
 		msg = tgbotapi.NewMessage(telegramID, wthr)

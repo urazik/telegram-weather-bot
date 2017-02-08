@@ -17,20 +17,20 @@ func CurrentWeatherFromLocation(lang string, coord *tgbotapi.Location, location,
 	return getTime(f.Currently.Time, f.Timezone) + getCity(location) + getCurrentWeather(lang, units, f)
 }
 
-func WeatherOfDay(user *model.DB) (string, error) {
+func WeatherOfDay(user *model.DB) string {
 	f := getForecast(user.Lat, user.Lng, user.Lang, user.Units)
 
-	return getWeatherByDay(user, f.Daily.Data[0], f.Timezone, user.Units), nil
+	return getWeatherByDay(user, f.Daily.Data[0], f.Timezone, user.Units)
 }
 
-func TomorrowWeather(user *model.DB) (string, error) {
+func TomorrowWeather(user *model.DB) string {
 	f := getForecast(user.Lat, user.Lng, user.Lang, user.Units)
 
-	return getWeatherByDay(user, f.Daily.Data[1], f.Timezone, user.Units), nil
+	return getWeatherByDay(user, f.Daily.Data[1], f.Timezone, user.Units)
 }
 
-func WeekWeather(user *model.DB) (string, error) {
+func WeekWeather(user *model.DB) string {
 	f := getForecast(user.Lat, user.Lng, user.Lang, user.Units)
 
-	return getWeekWeather(user, f, user.Units), nil
+	return getWeekWeather(user, f)
 }

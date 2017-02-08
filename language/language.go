@@ -35,15 +35,16 @@ var (
 			"°F, mph":           "°F, mph",
 			"mainMenu":          "Main menu",
 
-			"help": "_Bot_ show the *current* weather as well as *for today*, *tomorrow* and *the week*.\n\n" +
-				"`Keyboard Description`:\n" +
-				"`Now` - current weather\n" +
-				"`For today` - weather for today\n" +
-				"`For tomorrow` - weather for tomorrow\n" +
-				"`For week` - weather for the week\n\n" +
-				"You can also *send a message* to _bot_ or use a _bot_ *commands*.\n\n" +
-				"You can select the language by *command* /lang or by " + model.GlobeWithMeridian + ".\n" +
-				"View the current location and language is possible through " + model.Info + " or *command* /info.",
+			"help": "Bot show the *current* weather as well as *for today*, *tomorrow* and *the week*.\n\n" +
+				"*Now* - current weather\n" +
+				"*For today* - weather for today\n" +
+				"*For tomorrow* - weather for tomorrow\n" +
+				"*For week* - weather for the week\n\n" +
+				"You can also send a message to bot or use a bot *commands*.\n\n" +
+				"To select the language or units, click " + model.Gear + ".\n" +
+				"You can select the language by command /lang or by " + model.GlobeWithMeridian + ".\n" +
+				"Also you can select the units by command /units or by " + model.TriangularRuler + ".\n" +
+				"View the current location, language and units is possible by command /info or " + model.Info + ".",
 		},
 
 		"ru": {
@@ -74,15 +75,16 @@ var (
 			"°F, mph":           "°F, миль/ч",
 			"mainMenu":          "Главное меню",
 
-			"help": "_Бот_ показывает *текущую* погоду, а также на *сегодня*, *завтра* и *неделю*.\n\n" +
-				"`Описание клавиатуры`:\n" +
-				"`Сейчас` - текущая погода\n" +
-				"`На сегодня` - погода на сегодня\n" +
-				"`На завтра` - погода на завтра\n" +
-				"`На неделю` - погода на неделю\n\n" +
-				"Также вы можете *отправить* _боту_ сообщение или использовать *команды*.\n\n" +
-				"Вы можете выбрать язык введя *команду* /lang или " + model.GlobeWithMeridian + ".\n" +
-				"Посмотреть текущие настройки локации и языка можно через " + model.Info + " или *команду* /info.",
+			"help": "Бот показывает *текущую* погоду, а также на *сегодня*, *завтра* и *неделю*.\n\n" +
+				"*Сейчас* - текущая погода\n" +
+				"*На сегодня* - погода на сегодня\n" +
+				"*На завтра* - погода на завтра\n" +
+				"*На неделю* - погода на неделю\n\n" +
+				"Также вы можете отправить боту сообщение или использовать *команды*.\n\n" +
+				"Для выбора языка или единиц измерения, нажмите " + model.Gear + ".\n" +
+				"Вы можете выбрать язык введя команду /lang или " + model.GlobeWithMeridian + ".\n" +
+				"Также вы можете выбрать единицы измерения введя команду /units или " + model.TriangularRuler + ".\n" +
+				"Посмотреть текущие настройки локации, языка и единиц измерения можно введя команду /info или " + model.Info + ".",
 		},
 	}
 )
