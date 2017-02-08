@@ -4,6 +4,11 @@
     font-family: 'Source Code Pro', sans-serif;
 }
 
+img {
+    width: 70%;
+    margin-bottom: 75px;
+}
+
 .container h1 {
     font-size: 5em;
 }
@@ -21,7 +26,6 @@
 }
 
 .container p {
-    margin-top: 50px;
     font-size: 2em;
 }
 
@@ -32,4 +36,8 @@
 
 .container p a:hover {
     color: #2aabd2;
+}
+
+.github {
+    margin-top: 0;
 }

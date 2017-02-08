@@ -91,21 +91,10 @@ func SetUser(telegramID int64, g *gmodel.Geocoding, lang string) {
 	}
 
 	var data = map[string]interface{}{}
-
-	if g == nil {
-		data = map[string]interface{}{
-			"telegramID": telegramID,
-			"lang":       lang,
-		}
-	} else {
-		data = map[string]interface{}{
-			"telegramID": telegramID,
-			"location":   g.Result[0].FormattedAddress,
-			"lang":       lang,
-			"lat":        g.Result[0].Geometry.Location.Lat,
-			"lng":        g.Result[0].Geometry.Location.Lng,
-			"units":      "si",
-		}
+	data = map[string]interface{}{
+		"telegramID": telegramID,
+		"lang":       lang,
+		"units":      "si",
 	}
 
 	_, err := r.Table("users").Insert(data).RunWrite(session)
