@@ -3,21 +3,16 @@ package errors
 import (
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/lavrs/telegram-weather-bot/config"
+	"github.com/lavrs/telegram-weather-bot/language"
+	"github.com/lavrs/telegram-weather-bot/model"
 	"log"
 )
 
 func CheckErrPanic(cerr error) {
 	if cerr != nil {
-		bot, err := tgbotapi.NewBotAPI(config.Cfg.TelegramTestToken)
-		if err != nil {
-			log.Println(err)
-		}
+		bot, _ := tgbotapi.NewBotAPI(config.Cfg.TelegramTestToken)
 		msg := tgbotapi.NewMessage(config.Cfg.MyTelegramID, cerr.Error())
-		_, err = bot.Send(msg)
-		if err != nil {
-			log.Println(err)
-		}
-
+		bot.Send(msg)
 		log.Panic(cerr)
 	}
 }

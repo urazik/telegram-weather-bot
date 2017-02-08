@@ -187,7 +187,7 @@ func WeatherMsgFromCity(bot *tgbotapi.BotAPI, telegramID int64, location string)
 
 		wthr := w.CurrentWeather(
 			g.Result[0].Geometry.Location.Lat, g.Result[0].Geometry.Location.Lng,
-			user.Lang, g.Result[0].FormattedAddress, user.Units)
+			g.Result[0].FormattedAddress, user)
 
 		msg = tgbotapi.NewMessage(telegramID, wthr)
 	}
@@ -223,8 +223,8 @@ func WeatherMsgFromLocation(bot *tgbotapi.BotAPI, telegramID int64, location *tg
 			errors.CheckErrPanic(err)
 		}
 
-		wthr := w.CurrentWeatherFromLocation(user.Lang, location,
-			g.Result[0].FormattedAddress, user.Units)
+		wthr := w.CurrentWeatherFromLocation(g.Result[0].Geometry.Location.Lat,
+			g.Result[0].Geometry.Location.Lng, g.Result[0].FormattedAddress, user)
 
 		msg = tgbotapi.NewMessage(telegramID, wthr)
 	}
@@ -254,8 +254,7 @@ func WeatherMsgFromCmd(bot *tgbotapi.BotAPI, telegramID int64, message string) {
 	} else {
 		switch {
 		case (message == "now") || (message == "/now") || (message == "сейчас"):
-			wthr = w.CurrentWeather(user.Lat, user.Lng,
-				user.Lang, user.Location, user.Units)
+			wthr = w.CurrentWeather(user.Lat, user.Lng, user.Location, user)
 
 		case (message == "for today") || (message == "/today") || (message == "на сегодня"):
 			wthr = w.WeatherOfDay(user)

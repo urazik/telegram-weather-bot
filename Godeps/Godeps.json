@@ -2,6 +2,9 @@
 	"ImportPath": "github.com/lavrs/telegram-weather-bot",
 	"GoVersion": "go1.7",
 	"GodepVersion": "v79",
+	"Packages": [
+		"./..."
+	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/Sirupsen/logrus",
@@ -32,7 +35,7 @@
 		},
 		{
 			"ImportPath": "github.com/lavrs/darksky/forecast",
-			"Rev": "3b23fee3beef16a1baf913ae4cc57a6d2d2ca913"
+			"Rev": "b0b7233713b6027fbce01e26084bc8cad8ff4454"
 		},
 		{
 			"ImportPath": "github.com/lavrs/google-geocode/geocode",

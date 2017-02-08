@@ -34,6 +34,7 @@ var (
 			"°C, mps":           "°C, mps",
 			"°F, mph":           "°F, mph",
 			"mainMenu":          "Main menu",
+			"unknownError":      "Unknown error, please try later.",
 
 			"help": "Bot show the *current* weather as well as *for today*, *tomorrow* and *the week*.\n\n" +
 				"*Now* - current weather\n" +
@@ -74,6 +75,7 @@ var (
 			"°C, mps":           "°C, м/c",
 			"°F, mph":           "°F, миль/ч",
 			"mainMenu":          "Главное меню",
+			"unknownError":      "Неизвестная ошибка, попробуйте позже.",
 
 			"help": "Бот показывает *текущую* погоду, а также на *сегодня*, *завтра* и *неделю*.\n\n" +
 				"*Сейчас* - текущая погода\n" +

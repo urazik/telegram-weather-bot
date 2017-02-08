@@ -1,7 +1,6 @@
 package weather
 
 import (
-	"fmt"
 	"github.com/lavrs/darksky/forecast"
 	c "github.com/lavrs/telegram-weather-bot/config"
 	l "github.com/lavrs/telegram-weather-bot/language"
@@ -20,16 +19,16 @@ func FTS6(i float64) string {
 	return strconv.FormatFloat(i, 'f', 6, 64)
 }
 
-func getWeatherByDay(user *model.DB, f forecast.DataPoint, timezone, units string) string {
+func getWeatherByDay(user *model.DB, f forecast.DataPoint, timezone string) string {
 	return getDate(f.Time, timezone, user.Lang) + "," + getCity(user.Location) +
 		"\n`" + f.Summary + "`\n\n" + model.Icons[f.Icon] + " *" +
-		FTS0(f.TemperatureMin) + ".." + FTS0(f.TemperatureMax) + getTempUnit(units) + "*" +
-		"  " + getWind(f.WindSpeed, f.WindBearing, user.Lang, user.Units) +
-		"\n" + model.Sunrise + " " + getTime(f.SunriseTime, timezone) +
+		FTS0(f.TemperatureMin) + ".." + FTS0(f.TemperatureMax) + getTempUnit(user.Units) + "*" +
+		"  *" + getWind(f.WindSpeed, f.WindBearing, user.Lang, user.Units) +
+		"* \n" + model.Sunrise + " " + getTime(f.SunriseTime, timezone) +
 		"  " + model.Sunset + " " + getTime(f.SunsetTime, timezone) +
 		"  " + model.Moons[getMoonPhase(f.MoonPhase)] + "\n" +
 		"`" + l.Language[user.Lang]["IFL"] + "`  *" +
-		FTS0(f.ApparentTemperatureMin) + ".." + FTS0(f.ApparentTemperatureMax) + "°C*"
+		FTS0(f.ApparentTemperatureMin) + ".." + FTS0(f.ApparentTemperatureMax) + getTempUnit(user.Units) + "*"
 }
 
 func getWeekWeather(user *model.DB, f *forecast.Forecast) string {
@@ -40,8 +39,8 @@ func getWeekWeather(user *model.DB, f *forecast.Forecast) string {
 		text += getDate(day.Time, f.Timezone, user.Lang) + "  " +
 			model.Icons[day.Icon] + " *" + FTS0(day.TemperatureMin) +
 			".." + FTS0(day.TemperatureMax) + getTempUnit(user.Units) + "*" +
-			"  " + getWind(day.WindSpeed, day.WindBearing, user.Lang, user.Units) +
-			"\n`" + day.Summary + "`\n\n"
+			"  *" + getWind(day.WindSpeed, day.WindBearing, user.Lang, user.Units) +
+			"*\n`" + day.Summary + "`\n\n"
 	}
 
 	return text
@@ -84,20 +83,24 @@ func getForecast(lat, lng float64, lang, units string) *forecast.Forecast {
 	}
 	errors.CheckErrPanic(err)
 
+	if f.APICalls == 995 {
+		return nil
+	}
+
 	return f
 }
 
 func getCurrentWeather(lang string, units string, f *forecast.Forecast) string {
 	return model.Icons[f.Currently.Icon] + " *" + FTS0(f.Currently.Temperature) +
-		getTempUnit(units) + "*  " +
+		getTempUnit(units) + "  " +
 		getWind(f.Currently.WindSpeed, f.Currently.WindBearing, lang, units) +
-		"  `" + f.Currently.Summary + ".`\n`" + l.Language[lang]["IFL"] +
-		"`  *" + FTS0(f.Currently.ApparentTemperature) + "°C*"
+		"*  `" + f.Currently.Summary + ".`\n`" + l.Language[lang]["IFL"] +
+		"`  *" + FTS0(f.Currently.ApparentTemperature) + getTempUnit(units) + "*"
 }
 
 func getWind(speed, bearing float64, lang, units string) string {
 	return model.Directions[int(math.Mod(360+bearing/22.5+.5, 16))] +
-		" *" + FTS0(speed) + " " + getWindUnit(lang, units) + "*"
+		" " + FTS0(speed) + " " + getWindUnit(lang, units)
 }
 
 func getTempUnit(units string) string {

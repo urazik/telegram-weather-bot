@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 )
 
 type Flags struct {
@@ -77,6 +78,7 @@ type Forecast struct {
 	Daily     DataBlock `json:"daily"`
 	Alerts    []Alert   `json:"alerts"`
 	Flags     Flags     `json:"flags"`
+	APICalls  int       `json:"api_calls"`
 }
 
 type units string
@@ -137,6 +139,9 @@ func GetForecast(token, lat, lng, time string, lang language, units units) (*For
 	if err != nil {
 		return nil, err
 	}
+
+	calls, _ := strconv.Atoi(res.Header.Get("X-Forecast-API-Calls"))
+	f.APICalls = calls
 
 	return f, nil
 }

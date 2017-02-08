@@ -32,6 +32,10 @@ func GetReverseGeocode(location *tgbotapi.Location, lang string) (*geocode.Geoco
 	if err != nil {
 		if err.Error() == "ZERO_RESULTS" {
 			return nil, e.New("_" + l.Language[lang]["ZERO_RESULTS_LOCATION"] + "_")
+		} else if (err.Error() == "OVER_QUERY_LIMIT") || (err.Error() == "REQUEST_DENIED") ||
+			(err.Error() == "INVALID_REQUEST") || (err.Error() == "UNKNOWN_ERROR") {
+
+			return nil, e.New("_" + l.Language[lang]["unknownError"] + "_")
 		}
 		errors.CheckErrPanic(err)
 	}
@@ -55,6 +59,10 @@ func GetGeocode(location, lang string) (*geocode.Geocoding, error) {
 			return nil, e.New("_" + l.Language[lang]["ZERO_RESULTS_CITY"] + "_")
 		} else if err.Error() == "INVALID_REQUEST" {
 			return nil, e.New("_" + l.Language[lang]["INVALID_REQUEST"] + "_")
+		} else if (err.Error() == "OVER_QUERY_LIMIT") ||
+			(err.Error() == "REQUEST_DENIED") || (err.Error() == "UNKNOWN_ERROR") {
+
+			return nil, e.New("_" + l.Language[lang]["unknownError"] + "_")
 		}
 
 		errors.CheckErrPanic(err)
