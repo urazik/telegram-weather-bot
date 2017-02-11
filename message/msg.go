@@ -50,7 +50,7 @@ func UpdateUnitsMsg(bot *tgbotapi.BotAPI, telegramID int64, message string) {
 	db.UpdateUserUnits(telegramID, message)
 
 	message = strings.Replace(message, message[2:3],
-		strings.ToUpper(message[2:3]), -1)
+		strings.ToUpper(message[2:3]), 1)
 
 	msg := tgbotapi.NewMessage(telegramID,
 		l.Language[user.Lang]["changeUnits"]+" *"+message+"*")
