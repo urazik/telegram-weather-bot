@@ -180,7 +180,6 @@ func WeatherMsgFromCity(bot *tgbotapi.BotAPI, telegramID int64, location string)
 
 			msg := tgbotapi.NewMessage(telegramID,
 				l.Language[user.Lang]["changeCityTo"]+" "+g.Result[0].FormattedAddress)
-			msg.ReplyMarkup = mainKeyboard(user.Lang)
 			_, err = bot.Send(msg)
 			errors.CheckErrPanic(err)
 		}
@@ -192,6 +191,7 @@ func WeatherMsgFromCity(bot *tgbotapi.BotAPI, telegramID int64, location string)
 		msg = tgbotapi.NewMessage(telegramID, wthr)
 	}
 
+	msg.ReplyMarkup = mainKeyboard(user.Lang)
 	msg.ParseMode = "markdown"
 	_, err = bot.Send(msg)
 	errors.CheckErrPanic(err)
