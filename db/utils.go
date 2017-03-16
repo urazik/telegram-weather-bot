@@ -8,18 +8,17 @@ import (
 
 func createTelegramDB() {
 	_, err := r.DBCreate("telegram").RunWrite(session)
-	errors.CheckErrPanic(err)
+	errors.Check(err)
 }
 
 func createUsersTable() {
 	_, err := r.TableCreate("users").RunWrite(session)
-	errors.CheckErrPanic(err)
+	errors.Check(err)
 }
 
 func decodeOneBoolQueryResult(c *r.Cursor) (bool, error) {
 	var res bool
-	err := c.One(&res)
-	if err != nil {
+	if err := c.One(&res); err != nil {
 		return false, err
 	}
 
@@ -29,7 +28,7 @@ func decodeOneBoolQueryResult(c *r.Cursor) (bool, error) {
 func getUser(telegramID int64) *m.DB {
 	res, err := r.Table("users").Filter(
 		r.Row.Field("telegramID").Eq(telegramID)).Run(session)
-	errors.CheckErrPanic(err)
+	errors.Check(err)
 	defer res.Close()
 
 	if res.IsNil() {
@@ -38,7 +37,7 @@ func getUser(telegramID int64) *m.DB {
 
 	var user m.DB
 	err = res.One(&user)
-	errors.CheckErrPanic(err)
+	errors.Check(err)
 
 	return &user
 }
@@ -46,7 +45,7 @@ func getUser(telegramID int64) *m.DB {
 func getUserID(telegramID int64) *string {
 	res, err := r.Table("users").Filter(
 		r.Row.Field("telegramID").Eq(telegramID)).Field("id").Run(session)
-	errors.CheckErrPanic(err)
+	errors.Check(err)
 	defer res.Close()
 
 	if res.IsNil() {
@@ -55,24 +54,24 @@ func getUserID(telegramID int64) *string {
 
 	var ID string
 	err = res.One(&ID)
-	errors.CheckErrPanic(err)
+	errors.Check(err)
 
 	return &ID
 }
 
 func isTableAndDB() {
 	query, err := r.DBList().Contains("telegram").Run(session)
-	errors.CheckErrPanic(err)
+	errors.Check(err)
 
 	isDB, err := decodeOneBoolQueryResult(query)
-	errors.CheckErrPanic(err)
+	errors.Check(err)
 
 	if isDB {
 		query, err = r.TableList().Contains("users").Run(session)
-		errors.CheckErrPanic(err)
+		errors.Check(err)
 
 		table, err := decodeOneBoolQueryResult(query)
-		errors.CheckErrPanic(err)
+		errors.Check(err)
 
 		if !table {
 			createUsersTable()

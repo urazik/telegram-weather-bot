@@ -15,19 +15,22 @@ func SetConfig() {
 	Cfg.TelegramToken = data.TelegramToken
 	Cfg.TelegramTestToken = data.TelegramTestToken
 	Cfg.DarkskyToken = data.DarkskyToken
-	Cfg.GoogleGeocodeToken = data.GoogleGeocodeToken
+	Cfg.GoogleGeocodingToken = data.GoogleGeocodingToken
 	Cfg.MyTelegramID = data.MyTelegramID
 }
 
 func openFile() *m.Config {
-	file, err := ioutil.ReadFile("config.yml")
-	if err != nil {
+	var (
+		file []byte
+		err  error
+	)
+
+	if file, err = ioutil.ReadFile("config.yml"); err != nil {
 		log.Panic(err)
 	}
 
 	var data m.Config
-	err = yaml.Unmarshal(file, &data)
-	if err != nil {
+	if err := yaml.Unmarshal(file, &data); err != nil {
 		log.Panic(err)
 	}
 

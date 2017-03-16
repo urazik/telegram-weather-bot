@@ -1,11 +1,11 @@
 package model
 
 type Config struct {
-	TelegramToken      string `yaml:"telegram-token"`
-	TelegramTestToken  string `yaml:"telegram-test-token"`
-	DarkskyToken       string `yaml:"darksky-token"`
-	GoogleGeocodeToken string `yaml:"google-geocode-token"`
-	MyTelegramID       int64  `yaml:"my-telegram-id"`
+	TelegramToken        string `yaml:"telegram-token"`
+	TelegramTestToken    string `yaml:"telegram-test-token"`
+	DarkskyToken         string `yaml:"darksky-token"`
+	GoogleGeocodingToken string `yaml:"google-geocoding-token"`
+	MyTelegramID         int64  `yaml:"my-telegram-id"`
 }
 
 type DB struct {

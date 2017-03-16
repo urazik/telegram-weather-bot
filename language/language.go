@@ -1,8 +1,6 @@
 package language
 
-import (
-	"github.com/lavrs/telegram-weather-bot/model"
-)
+import "github.com/lavrs/telegram-weather-bot/model"
 
 var (
 	Language = map[string]map[string]string{
@@ -21,7 +19,6 @@ var (
 			"ZERO_RESULTS_CITY": "Unable to find the weather for this city",
 			"changeCityTo":      "Сhange city to",
 			"emptycity":         "Enter your city to get the actual weather",
-			"INVALID_REQUEST":   "The city is entered incorrectly",
 			"Monday":            "Mon",
 			"Tuesday":           "Tue",
 			"Wednesday":         "Wed",
@@ -62,7 +59,6 @@ var (
 			"ZERO_RESULTS_CITY": "Невозможо выдать погоду в данном городе",
 			"changeCityTo":      "Город изменен на",
 			"emptycity":         "Введите город, чтобы получить актуальную погоду",
-			"INVALID_REQUEST":   "Город введен неверно",
 			"Monday":            "Пн",
 			"Tuesday":           "Вт",
 			"Wednesday":         "Ср",

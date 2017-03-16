@@ -12,7 +12,7 @@ func main() {
 	c.SetConfig()
 
 	bot, err := tgbotapi.NewBotAPI(c.Cfg.TelegramToken)
-	errors.CheckErrPanic(err)
+	errors.Check(err)
 
 	log.Printf("Authorized on account %s", bot.Self.UserName)
 
@@ -20,7 +20,7 @@ func main() {
 	upd.Timeout = 60
 
 	updates, err := bot.GetUpdatesChan(upd)
-	errors.CheckErrPanic(err)
+	errors.Check(err)
 
 	for update := range updates {
 		msg.Updates(bot, update)

@@ -6,7 +6,7 @@ import (
 	l "github.com/lavrs/telegram-weather-bot/language"
 	"github.com/lavrs/telegram-weather-bot/model"
 	"github.com/lavrs/telegram-weather-bot/utils/errors"
-	"github.com/lavrs/telegram-weather-bot/utils/geocode"
+	"github.com/lavrs/telegram-weather-bot/utils/geocoding"
 	w "github.com/lavrs/telegram-weather-bot/weather"
 	"strings"
 )
@@ -22,7 +22,7 @@ func SettingsMsg(bot *tgbotapi.BotAPI, telegramID int64) {
 	msg := tgbotapi.NewMessage(telegramID, model.Gear)
 	msg.ReplyMarkup = settingsKeyboard()
 	_, err := bot.Send(msg)
-	errors.CheckErrPanic(err)
+	errors.Check(err)
 }
 
 func UnitsMsg(bot *tgbotapi.BotAPI, telegramID int64) {
@@ -36,7 +36,7 @@ func UnitsMsg(bot *tgbotapi.BotAPI, telegramID int64) {
 	msg := tgbotapi.NewMessage(telegramID, model.TriangularRuler)
 	msg.ReplyMarkup = unitsKeyboard(user.Lang)
 	_, err := bot.Send(msg)
-	errors.CheckErrPanic(err)
+	errors.Check(err)
 }
 
 func UpdateUnitsMsg(bot *tgbotapi.BotAPI, telegramID int64, message string) {
@@ -57,7 +57,7 @@ func UpdateUnitsMsg(bot *tgbotapi.BotAPI, telegramID int64, message string) {
 	msg.ReplyMarkup = mainKeyboard(user.Lang)
 	msg.ParseMode = "markdown"
 	_, err := bot.Send(msg)
-	errors.CheckErrPanic(err)
+	errors.Check(err)
 }
 
 func MainMenuMsg(bot *tgbotapi.BotAPI, telegramID int64) {
@@ -71,7 +71,7 @@ func MainMenuMsg(bot *tgbotapi.BotAPI, telegramID int64) {
 	msg := tgbotapi.NewMessage(telegramID, l.Language[user.Lang]["mainMenu"])
 	msg.ReplyMarkup = mainKeyboard(user.Lang)
 	_, err := bot.Send(msg)
-	errors.CheckErrPanic(err)
+	errors.Check(err)
 }
 
 func InfoMsg(bot *tgbotapi.BotAPI, telegramID int64) {
@@ -86,19 +86,21 @@ func InfoMsg(bot *tgbotapi.BotAPI, telegramID int64) {
 
 	if user.Location == "" {
 		msg = tgbotapi.NewMessage(telegramID,
-			"*"+l.Language[user.Lang]["YourLLU"]+"*\n"+
-				"`"+l.Language[user.Lang]["empty_location"]+"`   "+
+			"*"+l.Language[user.Lang]["YourLLU"]+"*\n"+"`"+
+				l.Language[user.Lang]["empty_location"]+"`   "+
 				model.CountriesFATE[user.Lang]+"   *"+user.Units+"*")
 	} else {
 		msg = tgbotapi.NewMessage(telegramID,
-			"*"+l.Language[user.Lang]["YourLLU"]+"*\n"+"`"+user.Location+
-				"`   "+model.CountriesFATE[user.Lang]+"   *"+user.Units+"*")
+			"*"+l.Language[user.Lang]["YourLLU"]+"*\n"+"`"+
+				user.Location+"`   "+
+				model.CountriesFATE[user.Lang]+"   *"+
+				user.Units+"*")
 	}
 
 	msg.ReplyMarkup = mainKeyboard(user.Lang)
 	msg.ParseMode = "markdown"
 	_, err := bot.Send(msg)
-	errors.CheckErrPanic(err)
+	errors.Check(err)
 }
 
 func UpdateLangMsg(bot *tgbotapi.BotAPI, telegramID int64, message string) {
@@ -110,29 +112,28 @@ func UpdateLangMsg(bot *tgbotapi.BotAPI, telegramID int64, message string) {
 		lang := db.UpdateUserLang(user, model.CountriesFETA[message], telegramID)
 
 		msg = tgbotapi.NewMessage(telegramID,
-			l.Language[lang]["changeLanguageTo"]+
-				" "+model.CountriesFATE[model.CountriesFETA[message]])
+			l.Language[lang]["changeLanguageTo"]+" "+model.CountriesFATE[model.CountriesFETA[message]])
 
 		msg.ReplyMarkup = mainKeyboard(model.CountriesFETA[message])
 	} else {
 		db.SetUser(telegramID, nil, model.CountriesFETA[message])
 
 		msg = tgbotapi.NewMessage(telegramID,
-			l.Language[model.CountriesFETA[message]]["changeLanguageTo"]+
-				" "+model.CountriesFATE[model.CountriesFETA[message]])
+			l.Language[model.CountriesFETA[message]]["changeLanguageTo"]+" "+
+				model.CountriesFATE[model.CountriesFETA[message]])
 
 		msg.ReplyMarkup = mainKeyboard(model.CountriesFETA[message])
 	}
 
 	_, err := bot.Send(msg)
-	errors.CheckErrPanic(err)
+	errors.Check(err)
 }
 
 func LangKeyboardMsg(bot *tgbotapi.BotAPI, telegramID int64) {
 	msg := tgbotapi.NewMessage(telegramID, model.GlobeWithMeridian)
 	msg.ReplyMarkup = langKeyboard()
 	_, err := bot.Send(msg)
-	errors.CheckErrPanic(err)
+	errors.Check(err)
 }
 
 func StartMsg(bot *tgbotapi.BotAPI, telegramID int64) {
@@ -158,7 +159,7 @@ func Help(bot *tgbotapi.BotAPI, telegramID int64) {
 	msg.ReplyMarkup = mainKeyboard(user.Lang)
 	msg.ParseMode = "markdown"
 	_, err := bot.Send(msg)
-	errors.CheckErrPanic(err)
+	errors.Check(err)
 }
 
 func WeatherMsgFromCity(bot *tgbotapi.BotAPI, telegramID int64, location string) {
@@ -171,30 +172,29 @@ func WeatherMsgFromCity(bot *tgbotapi.BotAPI, telegramID int64, location string)
 
 	var msg tgbotapi.MessageConfig
 
-	g, err := geocode.GetGeocode(location, user.Lang)
-	if err != nil {
+	if g, err := geocoding.Geocode(location, user.Lang); err != nil {
 		msg = tgbotapi.NewMessage(telegramID, err.Error())
 	} else {
-		if user.Location != g.Result[0].FormattedAddress {
+		if user.Location != g[0].FormattedAddress {
 			db.SetUser(telegramID, g, user.Lang)
 
 			msg := tgbotapi.NewMessage(telegramID,
-				l.Language[user.Lang]["changeCityTo"]+" "+g.Result[0].FormattedAddress)
+				l.Language[user.Lang]["changeCityTo"]+" "+g[0].FormattedAddress)
 			_, err = bot.Send(msg)
-			errors.CheckErrPanic(err)
+			errors.Check(err)
 		}
 
 		wthr := w.CurrentWeather(
-			g.Result[0].Geometry.Location.Lat, g.Result[0].Geometry.Location.Lng,
-			g.Result[0].FormattedAddress, user)
+			g[0].Geometry.Location.Lat, g[0].Geometry.Location.Lng,
+			g[0].FormattedAddress, user)
 
 		msg = tgbotapi.NewMessage(telegramID, wthr)
 	}
 
 	msg.ReplyMarkup = mainKeyboard(user.Lang)
 	msg.ParseMode = "markdown"
-	_, err = bot.Send(msg)
-	errors.CheckErrPanic(err)
+	_, err := bot.Send(msg)
+	errors.Check(err)
 }
 
 func WeatherMsgFromLocation(bot *tgbotapi.BotAPI, telegramID int64, location *tgbotapi.Location) {
@@ -207,31 +207,29 @@ func WeatherMsgFromLocation(bot *tgbotapi.BotAPI, telegramID int64, location *tg
 
 	var msg tgbotapi.MessageConfig
 
-	g, err := geocode.GetReverseGeocode(location, user.Lang)
-	if err != nil {
+	if g, err := geocoding.ReverseGeocode(location, user.Lang); err != nil {
 		msg = tgbotapi.NewMessage(telegramID, err.Error())
 	} else {
-		if (user.Lat != g.Result[0].Geometry.Location.Lat) ||
-			(user.Lng != g.Result[0].Geometry.Location.Lng) {
+		if (user.Lat != g[0].Geometry.Location.Lat) ||
+			(user.Lng != g[0].Geometry.Location.Lng) {
 
 			db.SetUser(telegramID, g, user.Lang)
 
-			msg = tgbotapi.NewMessage(telegramID, l.Language[user.Lang]["changeCityTo"]+
-				" "+g.Result[0].FormattedAddress)
+			msg = tgbotapi.NewMessage(telegramID, l.Language[user.Lang]["changeCityTo"]+" "+g[0].FormattedAddress)
 			msg.ReplyMarkup = mainKeyboard(user.Lang)
 			_, err = bot.Send(msg)
-			errors.CheckErrPanic(err)
+			errors.Check(err)
 		}
 
-		wthr := w.CurrentWeatherFromLocation(g.Result[0].Geometry.Location.Lat,
-			g.Result[0].Geometry.Location.Lng, g.Result[0].FormattedAddress, user)
+		wthr := w.CurrentWeatherFromLocation(g[0].Geometry.Location.Lat,
+			g[0].Geometry.Location.Lng, g[0].FormattedAddress, user)
 
 		msg = tgbotapi.NewMessage(telegramID, wthr)
 	}
 
 	msg.ParseMode = "markdown"
-	_, err = bot.Send(msg)
-	errors.CheckErrPanic(err)
+	_, err := bot.Send(msg)
+	errors.Check(err)
 }
 
 func WeatherMsgFromCmd(bot *tgbotapi.BotAPI, telegramID int64, message string) {
@@ -272,5 +270,5 @@ func WeatherMsgFromCmd(bot *tgbotapi.BotAPI, telegramID int64, message string) {
 	}
 
 	_, err = bot.Send(msg)
-	errors.CheckErrPanic(err)
+	errors.Check(err)
 }

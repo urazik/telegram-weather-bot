@@ -3,6 +3,7 @@ package msg
 import (
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/lavrs/telegram-weather-bot/model"
+	"golang.org/x/text/language"
 	"strings"
 )
 
@@ -31,8 +32,8 @@ func Updates(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
 		return
 	}
 
-	if (update.Message.Text == model.CountriesFATE["en"]) ||
-		(update.Message.Text == model.CountriesFATE["ru"]) {
+	if (update.Message.Text == model.CountriesFATE[language.English.String()]) ||
+		(update.Message.Text == model.CountriesFATE[language.Russian.String()]) {
 
 		UpdateLangMsg(bot, update.Message.Chat.ID, update.Message.Text)
 

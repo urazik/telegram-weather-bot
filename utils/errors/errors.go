@@ -6,11 +6,11 @@ import (
 	"log"
 )
 
-func CheckErrPanic(cerr error) {
-	if cerr != nil {
+func Check(err error) {
+	if err != nil {
 		bot, _ := tgbotapi.NewBotAPI(config.Cfg.TelegramToken)
-		msg := tgbotapi.NewMessage(config.Cfg.MyTelegramID, cerr.Error())
+		msg := tgbotapi.NewMessage(config.Cfg.MyTelegramID, err.Error())
 		bot.Send(msg)
-		log.Panic(cerr)
+		log.Panic(err)
 	}
 }

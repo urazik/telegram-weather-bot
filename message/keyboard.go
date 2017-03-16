@@ -4,6 +4,7 @@ import (
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	l "github.com/lavrs/telegram-weather-bot/language"
 	"github.com/lavrs/telegram-weather-bot/model"
+	"golang.org/x/text/language"
 )
 
 func mainKeyboard(lang string) tgbotapi.ReplyKeyboardMarkup {
@@ -48,8 +49,8 @@ func langKeyboard() tgbotapi.ReplyKeyboardMarkup {
 	return tgbotapi.NewReplyKeyboard(
 		[]tgbotapi.KeyboardButton{
 			tgbotapi.NewKeyboardButton(model.Back),
-			tgbotapi.NewKeyboardButton(model.CountriesFATE["en"]),
-			tgbotapi.NewKeyboardButton(model.CountriesFATE["ru"]),
+			tgbotapi.NewKeyboardButton(model.CountriesFATE[language.English.String()]),
+			tgbotapi.NewKeyboardButton(model.CountriesFATE[language.Russian.String()]),
 		},
 	)
 }
