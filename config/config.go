@@ -1,38 +1,34 @@
 package config
 
 import (
-	"github.com/go-yaml/yaml"
-	m "github.com/lavrs/telegram-weather-bot/model"
-	"io/ioutil"
-	"log"
+    "github.com/go-yaml/yaml"
+    m "github.com/lavrs/telegram-weather-bot/model"
+    "io/ioutil"
+    "log"
 )
 
 var Cfg m.Config
 
 func SetConfig() {
-	data := openFile()
+    data := openFile()
 
-	Cfg.TelegramToken = data.TelegramToken
-	Cfg.TelegramTestToken = data.TelegramTestToken
-	Cfg.DarkskyToken = data.DarkskyToken
-	Cfg.GoogleGeocodingToken = data.GoogleGeocodingToken
-	Cfg.MyTelegramID = data.MyTelegramID
+    &Cfg = data
 }
 
 func openFile() *m.Config {
-	var (
-		file []byte
-		err  error
-	)
+    var (
+        file []byte
+        err  error
+    )
 
-	if file, err = ioutil.ReadFile("config.yml"); err != nil {
-		log.Panic(err)
-	}
+    if file, err = ioutil.ReadFile("config.yml"); err != nil {
+        log.Panic(err)
+    }
 
-	var data m.Config
-	if err := yaml.Unmarshal(file, &data); err != nil {
-		log.Panic(err)
-	}
+    var data m.Config
+    if err := yaml.Unmarshal(file, &data); err != nil {
+        log.Panic(err)
+    }
 
-	return &data
+    return &data
 }

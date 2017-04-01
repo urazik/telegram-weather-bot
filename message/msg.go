@@ -210,8 +210,8 @@ func WeatherMsgFromLocation(bot *tgbotapi.BotAPI, telegramID int64, location *tg
 	if g, err := geocoding.ReverseGeocode(location, user.Lang); err != nil {
 		msg = tgbotapi.NewMessage(telegramID, err.Error())
 	} else {
-		if (user.Lat != g[0].Geometry.Location.Lat) ||
-			(user.Lng != g[0].Geometry.Location.Lng) {
+		if user.Lat != g[0].Geometry.Location.Lat ||
+			user.Lng != g[0].Geometry.Location.Lng {
 
 			db.SetUser(telegramID, g, user.Lang)
 
@@ -251,16 +251,16 @@ func WeatherMsgFromCmd(bot *tgbotapi.BotAPI, telegramID int64, message string) {
 		msg.ReplyMarkup = helpKeyboard()
 	} else {
 		switch {
-		case (message == "now") || (message == "/now") || (message == "сейчас"):
+		case message == "now" || message == "/now" || message == "сейчас":
 			wthr = w.CurrentWeather(user.Lat, user.Lng, user.Location, user)
 
-		case (message == "for today") || (message == "/today") || (message == "на сегодня"):
+		case message == "for today" || message == "/today" || message == "на сегодня":
 			wthr = w.WeatherOfDay(user)
 
-		case (message == "for tomorrow") || (message == "/tomorrow") || (message == "на завтра"):
+		case message == "for tomorrow" || message == "/tomorrow" || message == "на завтра":
 			wthr = w.TomorrowWeather(user)
 
-		case (message == "for week") || (message == "/week") || (message == "на неделю"):
+		case message == "for week" || message == "/week" || message == "на неделю":
 			wthr = w.WeekWeather(user)
 		}
 
