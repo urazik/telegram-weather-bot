@@ -1,28 +1,29 @@
 package main
 
 import (
-	"github.com/go-telegram-bot-api/telegram-bot-api"
-	c "github.com/lavrs/telegram-weather-bot/config"
-	msg "github.com/lavrs/telegram-weather-bot/message"
-	"github.com/lavrs/telegram-weather-bot/utils/errors"
-	"log"
+    "github.com/go-telegram-bot-api/telegram-bot-api"
+    c "github.com/lavrs/telegram-weather-bot/config"
+    msg "github.com/lavrs/telegram-weather-bot/message"
+    "github.com/lavrs/telegram-weather-bot/utils/errors"
+    "log"
 )
 
 func main() {
-	c.SetConfig()
+    c.SetConfig()
 
-	bot, err := tgbotapi.NewBotAPI(c.Cfg.TelegramToken)
-	errors.Check(err)
+    bot, err := tgbotapi.NewBotAPI(c.Cfg.TelegramToken)
+    errors.Check(err)
 
-	log.Printf("Authorized on account %s", bot.Self.UserName)
+    log.Printf("Authorized on account %s", bot.Self.UserName)
 
-	upd := tgbotapi.NewUpdate(0)
-	upd.Timeout = 60
+    upd := tgbotapi.NewUpdate(0)
+    upd.Timeout = 60
 
-	updates, err := bot.GetUpdatesChan(upd)
-	errors.Check(err)
+    updates, err := bot.GetUpdatesChan(upd)
+    errors.Check(err)
 
-	for update := range updates {
-		msg.Updates(bot, update)
-	}
+    for update := range updates {
+        msg.Updates(bot, update)
+    }
 }
+~
