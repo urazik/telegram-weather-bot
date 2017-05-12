@@ -1,0 +1,102 @@
+{
+	"ImportPath": "github.com/lavrs/telegram-weather-bot",
+	"GoVersion": "go1.8",
+	"GodepVersion": "v79",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/Sirupsen/logrus",
+			"Comment": "v0.11.0-25-g881bee4",
+			"Rev": "881bee4e20a5d11a6a88a5667c6f292072ac1963"
+		},
+		{
+			"ImportPath": "github.com/cenkalti/backoff",
+			"Comment": "v1.0.0-18-g3db60c8",
+			"Rev": "3db60c813733fce657c114634171689bbf1f8dee"
+		},
+		{
+			"ImportPath": "github.com/go-telegram-bot-api/telegram-bot-api",
+			"Comment": "v4.6-17-gf5c6a47",
+			"Rev": "f5c6a478a0e3271a51649c64661ac90ed3d30bf1"
+		},
+		{
+			"ImportPath": "github.com/go-yaml/yaml",
+			"Rev": "a3f3340b5840cee44f372bddb5880fcbc419b46a"
+		},
+		{
+			"ImportPath": "github.com/golang/protobuf/proto",
+			"Rev": "8616e8ee5e20a1704615e6c8d7afcdac06087a67"
+		},
+		{
+			"ImportPath": "github.com/hailocab/go-hostpool",
+			"Rev": "e80d13ce29ede4452c43dea11e79b9bc8a15b478"
+		},
+		{
+			"ImportPath": "github.com/mlbright/forecast/v2",
+			"Rev": "7c00d78afd02c4bc3f8ac0ed0b7052d3581c42aa"
+		},
+		{
+			"ImportPath": "github.com/technoweenie/multipartstreamer",
+			"Comment": "v1.0.1",
+			"Rev": "a90a01d73ae432e2611d178c18367fbaa13e0154"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/pbkdf2",
+			"Rev": "1f22c0103821b9390939b6776727195525381532"
+		},
+		{
+			"ImportPath": "golang.org/x/net/context",
+			"Rev": "e90d6d0afc4c315a0d87a568ae68577cc15149a0"
+		},
+		{
+			"ImportPath": "golang.org/x/net/context/ctxhttp",
+			"Rev": "e90d6d0afc4c315a0d87a568ae68577cc15149a0"
+		},
+		{
+			"ImportPath": "golang.org/x/sys/unix",
+			"Rev": "9c60d1c508f5134d1ca726b4641db998f2523357"
+		},
+		{
+			"ImportPath": "golang.org/x/text/internal/tag",
+			"Rev": "2910a502d2bf9e43193af9d68ca516529614eed3"
+		},
+		{
+			"ImportPath": "golang.org/x/text/language",
+			"Rev": "2910a502d2bf9e43193af9d68ca516529614eed3"
+		},
+		{
+			"ImportPath": "googlemaps.github.io/maps",
+			"Rev": "8e7244f1c0afccfa76f92afff890cdb0ae64f9ee"
+		},
+		{
+			"ImportPath": "googlemaps.github.io/maps/internal",
+			"Rev": "8e7244f1c0afccfa76f92afff890cdb0ae64f9ee"
+		},
+		{
+			"ImportPath": "gopkg.in/fatih/pool.v2",
+			"Rev": "20a0a429c5f93de45c90f5f09ea297c25e0929b3"
+		},
+		{
+			"ImportPath": "gopkg.in/gorethink/gorethink.v3",
+			"Comment": "v3.0.1",
+			"Rev": "610fcc04c971a9fa42f1b6625c7c52b5bb472c51"
+		},
+		{
+			"ImportPath": "gopkg.in/gorethink/gorethink.v3/encoding",
+			"Comment": "v3.0.1",
+			"Rev": "610fcc04c971a9fa42f1b6625c7c52b5bb472c51"
+		},
+		{
+			"ImportPath": "gopkg.in/gorethink/gorethink.v3/ql2",
+			"Comment": "v3.0.1",
+			"Rev": "610fcc04c971a9fa42f1b6625c7c52b5bb472c51"
+		},
+		{
+			"ImportPath": "gopkg.in/gorethink/gorethink.v3/types",
+			"Comment": "v3.0.1",
+			"Rev": "610fcc04c971a9fa42f1b6625c7c52b5bb472c51"
+		}
+	]
+}

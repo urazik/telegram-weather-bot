@@ -1,0 +1,43 @@
+.container {
+    margin-top: 75px;
+    user-select: none;
+    font-family: 'Source Code Pro', sans-serif;
+}
+
+img {
+    width: 70%;
+    margin-bottom: 75px;
+}
+
+.container h1 {
+    font-size: 5em;
+}
+
+.container button {
+    font-size: 1.5em;
+    width: 200px;
+    margin-top: 50px;
+}
+
+.container button:hover {
+    color: #2aabd2;
+    background-color: #ffffff;
+    border-color: #2aabd2;
+}
+
+.container p {
+    font-size: 2em;
+}
+
+.container p a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.container p a:hover {
+    color: #2aabd2;
+}
+
+.github {
+    margin-top: 0;
+}
